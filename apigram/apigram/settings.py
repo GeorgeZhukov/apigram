@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--$fs-%@lr1hi29)9e9@3w%o#s-onud2z+_4oaqo1e5#(o$-@7!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['141.148.245.194']
 
 
 # Application definition
@@ -85,27 +85,26 @@ WSGI_APPLICATION = 'apigram.wsgi.application'
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'apigram_development',
-        'USER': 'postgres',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '5433',
-    }
-}
-
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'apigram_development',
 #         'USER': 'postgres',
 #         'PASSWORD': '',
-#         'HOST': 'db',
+#         'HOST': 'localhost',
+#         'PORT': '5433',
 #     }
 # }
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'apigram_development',
+        'USER': 'postgres',
+        'HOST': 'db',
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

@@ -9,17 +9,12 @@ from rest_framework.response import Response
 
 
 
-class CustomAuthToken(ObtainAuthToken):
+class CustomObtainAuthToken(ObtainAuthToken):
+    """
+    This endpoint returns token
+    You should include this token with headers
+    For example:
+      Authorization: Token 03d2238e5408c076a8ff2735055ffbi471dcd0c1
+    """
     
-    def post(self, request, *args, **kwargs):
-        print("request data: {}".format(request.data))
-        serializer = self.serializer_class(data=request.data,
-                                           context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        token, created = Token.objects.get_or_create(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'email': user.email
-        })
+    pass

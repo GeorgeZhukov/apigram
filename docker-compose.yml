@@ -19,7 +19,7 @@ services:
   app:
     build: .
     # command: uwsgi --socket :8000 --module apigram.wsgi
-    command: uwsgi --ini ../uwsgi.ini
+    command: uwsgi --ini /usr/src/app/uwsgi.ini
     links:
       - 'db'
     restart: always

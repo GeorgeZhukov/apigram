@@ -1,0 +1,17 @@
+version: '3.7'
+
+volumes:
+  postgres_data:
+services:
+  db:
+    image: postgres:15.1
+    restart: always
+    ports:
+      - 5433:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: apigram_development
+      POSTGRES_HOST_AUTH_METHOD: trust
+    healthcheck:
+      test: ["CMD", "pg_isready"]

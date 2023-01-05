@@ -27,7 +27,7 @@ from rest_framework.schemas import get_schema_view
 from rest_framework.renderers import JSONOpenAPIRenderer
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='api/v1/redoc/', permanent=False)),
+    path('', RedirectView.as_view(url='redoc/', permanent=False)),
     path('api/v1/', include('coreapi.urls')),
     path('admin/', admin.site.urls),
     
@@ -45,7 +45,7 @@ urlpatterns = [
 ]
 
 
-if settings.DEBUG:
+if settings.DEBUG or True:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

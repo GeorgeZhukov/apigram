@@ -12,4 +12,4 @@ RUN pip install -r requirements.txt
 COPY apigram/ .
 
 EXPOSE 8000
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000", "--settings=apigram.settings.docker"]
+CMD python manage.py runserver 0.0.0.0:8000

@@ -21,5 +21,7 @@ services:
       - 'db'
     restart: always
     ports:
-      - 8000:8000
+      - 80:8000
+    environment:
+      - DJANGO_SETTINGS_MODULE=apigram.settings.docker
     

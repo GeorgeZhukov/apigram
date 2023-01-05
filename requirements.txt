@@ -8,6 +8,7 @@ Markdown==3.4.1
 Pillow==9.4.0
 platformdirs==2.6.2
 psycopg2==2.9.5
+python-decouple==3.6
 pytz==2022.7
 PyYAML==6.0
 six==1.16.0

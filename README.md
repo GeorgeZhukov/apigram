@@ -11,10 +11,12 @@ It is assumed that you are running a postgresql server.
 
 
 ```bash
+
 virtualenv venv && source venv/bin/activate
 pip install -r requirements.txt
 
 cd apigram/
+cp .env.example .env # Change this key if you'll deploy production
 
 ./manage.py migrate
 ./manage.py runserver

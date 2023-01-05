@@ -28,13 +28,32 @@ class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
         model = PostPhoto
         fields = [ 'id', 'post',  'photo' ]
 
+    def create(self, validated_data):
+        queryset = Post.objects.filter(author=self.context['request'].user.account)
+        if 'post' in validated_data and validated_data['post']:
+            if not queryset.filter(pk=validated_data['post'].pk).exists():
+                raise serializers.ValidationError("You can't add photos to other users posts")
 
-class PostSerializer(serializers.HyperlinkedModelSerializer):
+        return super().create(validated_data)
+
+
+class PostSerializer(serializers.ModelSerializer):
     post_photos = PostPhotoSerializer(many=True, read_only=True)
+    
 
     class Meta:
         model = Post
+        read_only_fields = ['id', 'author', 'created_at', 'updated_at']
         fields = [ 'id', 'author', 'description', 'post_photos','created_at', 'updated_at' ]
+
+    def create(self, validated_data):
+        account = self.context['request'].user.account
+
+        post = Post.objects.create(
+            author=account,
+            description=validated_data['description']
+        )
+        return post
 
 
 
@@ -71,11 +90,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             last_name=validated_data['last_name']
         )
 
-
-        
         user.set_password(validated_data['password'])
         user.save()
-
-        Account.objects.create(user=user)
 
         return user

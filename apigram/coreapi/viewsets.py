@@ -16,6 +16,7 @@ from .models import Account, Post, PostPhoto
 class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     """
     **For authorized users**
+
     Returns a list of all **active** accounts in the system.
     """
     queryset = Account.objects.all()
@@ -26,18 +27,22 @@ class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retr
 class PostViewSet(viewsets.ModelViewSet):
     """
     **For authorized users**
+
     Returns a list of all **active** posts
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    
 
 
 
-class PostPhotoViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin):
+# class PostPhotoViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
+class PostPhotoViewSet(viewsets.ModelViewSet):
     """
     **For authorized users**
+
     Returns a list of photos related to posts
     """
     queryset = PostPhoto.objects.all()

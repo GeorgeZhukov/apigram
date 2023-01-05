@@ -1,7 +1,6 @@
 from rest_framework import routers
 
 from .viewsets import  AccountViewSet, PostViewSet, PostPhotoViewSet, RegisterViewSet
-from .views import CustomAuthToken
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.validators import FileExtensionValidator
+from django.db.models.signals import post_save
 
 # Create your models here.
 
@@ -14,7 +15,7 @@ class CoreApiBaseModel(models.Model):
 
 
 class Account(CoreApiBaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='account')
 
     def __str__(self) -> str:
         return self.user.__str__()
@@ -31,9 +32,24 @@ class Post(CoreApiBaseModel):
 
 
 class PostPhoto(CoreApiBaseModel):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_photos' )
-    photo = models.ImageField(upload_to='post_photos')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_photos', null=True )
+    photo = models.ImageField(
+        upload_to='post_photos', 
+        unique=True,
+        validators=[
+            FileExtensionValidator(['jpg', 'jpeg'])
+        ]
+    )
 
     def __str__(self) -> str:
         
         return '[{}] {}'.format(self.post, self.photo.name)
+
+
+
+def save_account(sender, instance, **kwargs):
+    if not kwargs['created']:
+        Account(user=instance).save()
+
+
+post_save.connect(save_account, sender=User)

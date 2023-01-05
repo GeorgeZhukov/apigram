@@ -13,7 +13,7 @@ from .models import Account, Post, PostPhoto
 #     serializer_class = UserSerializer
 
 
-class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
+class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     """
     Returns a list of all **active** accounts in the system.
 
@@ -35,14 +35,16 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def retrieve(self, request, *args, **kwargs):
-        print("kwargs: {}".format(kwargs))
-        queryset = Post.objects.filter(pk=kwargs['pk']).first()
-        # return super().retrieve(request, *args, **kwargs)
-        serializer = PostSerializer(queryset, context={'request': request})
+
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     print("kwargs: {}".format(kwargs))
+    #     queryset = Post.objects.filter(pk=kwargs['pk']).first()
+    #     # return super().retrieve(request, *args, **kwargs)
+    #     serializer = PostSerializer(queryset, context={'request': request})
 
         
-        return response.Response(data=serializer.data)
+    #     return response.Response(data=serializer.data)
 
 
 

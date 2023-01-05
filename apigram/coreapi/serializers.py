@@ -13,9 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
 
-        fields = ['email', 'username', 'is_active', 'is_superuser', 'is_staff', 'date_joined']
-        # fields = '__all__'
-        # fields = ['url', 'username', 'email', 'is_staff']
+        fields = ['email', 'username', 'is_active', 'date_joined']
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -23,10 +21,6 @@ class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = ['id', 'user', 'created_at', 'updated_at' ]
-        # depth = 1
-
-
-
 
 
 class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
@@ -41,10 +35,6 @@ class PostSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Post
         fields = [ 'id', 'author', 'description', 'post_photos','created_at', 'updated_at' ]
-
-
-
-
 
 
 

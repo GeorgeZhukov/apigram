@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.db.models.signals import post_save
 
+from imagekit.models import ProcessedImageField
+from imagekit.processors import ResizeToFill
+
 # Create your models here.
 
 
@@ -38,13 +41,15 @@ class Post(CoreApiBaseModel):
 
 class PostPhoto(CoreApiBaseModel):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_photos', null=True )
-    photo = models.ImageField(
-        upload_to='post_photos', 
+    photo = ProcessedImageField(
+        upload_to='post_photos',
+        processors=[ResizeToFill(1440, 1440)],
+        format='JPEG',
+        options={'quality': 80},
         unique=True,
-        validators=[
-            FileExtensionValidator(['jpg', 'jpeg'])
-        ]
+        
     )
+
     author = models.ForeignKey(Account, on_delete=models.CASCADE)
 
     @property

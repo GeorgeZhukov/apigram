@@ -55,7 +55,7 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 # )
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='redoc/', permanent=False)),
+    path('', RedirectView.as_view(url='api/schema/swagger-ui/', permanent=False)),
     path('api/v1/', include('coreapiapp.urls')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:

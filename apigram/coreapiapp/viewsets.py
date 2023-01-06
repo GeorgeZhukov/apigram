@@ -88,7 +88,10 @@ class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retr
 class PostViewSet(viewsets.ModelViewSet):
     """
 
-    Returns a list of all **active** posts
+    Resource of all posts
+
+    **Create post** -
+    Before creating post resource you should create post photos and then use id of each saved record to create post
 
     For authorized users only
     """
@@ -114,7 +117,9 @@ class PostViewSet(viewsets.ModelViewSet):
 class PostPhotoViewSet(viewsets.ModelViewSet):
     """
 
-    Returns a list of photos related to posts
+    Resource of photos related to posts
+
+    Create post photos before post itself and then use id of each saved record to create post
 
     For authorized users only
 

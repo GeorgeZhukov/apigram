@@ -22,12 +22,17 @@ class Account(CoreApiBaseModel):
 
 
 
+
 class Post(CoreApiBaseModel):
     author = models.ForeignKey(Account, on_delete=models.CASCADE)
     description = models.TextField()
 
     def __str__(self) -> str:
         return '[{}] {}: {}'.format(self.pk, self.author, self.description)
+
+    @property
+    def owner(self) -> User:
+        return self.author.user
 
 
 
@@ -40,6 +45,11 @@ class PostPhoto(CoreApiBaseModel):
             FileExtensionValidator(['jpg', 'jpeg'])
         ]
     )
+    author = models.ForeignKey(Account, on_delete=models.CASCADE)
+
+    @property
+    def owner(self) -> User:
+        return self.author.user
 
     def __str__(self) -> str:
         

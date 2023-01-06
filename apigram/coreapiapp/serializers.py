@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
 
-        fields = ['email', 'username', 'is_active', 'date_joined']
+        fields = [ 'username', 'is_active', 'date_joined']
 
 
 class AccountSerializer(serializers.ModelSerializer):

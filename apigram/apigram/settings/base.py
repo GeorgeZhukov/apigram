@@ -64,6 +64,8 @@ INSTALLED_APPS = [
 
     'drf_spectacular',
     'drf_standardized_errors',
+
+    'admin_honeypot',
 ]
 
 MIDDLEWARE = [

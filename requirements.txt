@@ -6,9 +6,11 @@ coreapi==2.3.3
 coreschema==0.0.4
 distlib==0.3.6
 Django==4.1.5
+django-admin-honeypot @ git+https://github.com/dmpayton/django-admin-honeypot.git@a840496d183df89965eeb33c9a5dd9ea3919dfff
 django-appconf==1.0.5
 django-filter==22.1
 django-imagekit==4.1.0
+django-ipware==4.0.2
 djangorestframework==3.14.0
 drf-spectacular==0.25.1
 drf-spectacular-sidecar==2022.12.1

@@ -2,8 +2,9 @@ version: '3.9'
 
 volumes:
   postgres_data:
-  app_data:
+  app_data_static:
   app_data_cache:
+  app_data_media:
 services:
   db:
     image: postgres:15.1
@@ -26,7 +27,8 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - app_data:/usr/src/app/apigram
+      - app_data_static:/usr/src/app/apigram/static
+      - app_data_media:/usr/src/app/apigram/media
       - app_data_cache:/root/.cache
     environment:
       - DJANGO_SETTINGS_MODULE=apigram.settings.docker
@@ -35,7 +37,8 @@ services:
     image: nginx
     volumes:
       - ./nginx:/etc/nginx/templates
-      - app_data:/usr/src/app/apigram:ro
+      - app_data_static:/usr/src/app/apigram/static:ro
+      - app_data_media:/usr/src/app/apigram/media:ro
     ports:
       - "443:8000"
     links:

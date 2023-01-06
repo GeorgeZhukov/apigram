@@ -13,6 +13,18 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 from decouple import config
 
+from django.utils.deprecation import MiddlewareMixin
+
+class CustomHeaderMiddleware(MiddlewareMixin):
+    def process_request(self, request):
+        # This crutch is used for swagger documentation (token substitution)
+
+        if 'HTTP_AUTHORIZATION' in request.META:
+            value = request.META['HTTP_AUTHORIZATION']
+            if value and not value.startswith('Token '):
+                request.META['HTTP_AUTHORIZATION'] = 'Token {}'.format(value)
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,13 +51,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'drf_yasg',
+
     'rest_framework',
     'rest_framework.authtoken',
+
 
     'coreapi',
 ]
 
 MIDDLEWARE = [
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,6 +69,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'apigram.settings.base.CustomHeaderMiddleware', # TODO: remove 
 ]
 
 ROOT_URLCONF = 'apigram.urls'
@@ -145,6 +162,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     ],
@@ -153,3 +171,21 @@ REST_FRAMEWORK = {
 
 
 MEDIA_URL = '/media/'
+
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+    #   'Basic': {
+    #         'type': 'basic'
+    #   },
+      'Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+      }
+   },
+   'PERSIST_AUTH': True,
+   'REFETCH_SCHEMA_WITH_AUTH': True,
+}
+
+

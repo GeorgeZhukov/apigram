@@ -23,27 +23,49 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
 
-from rest_framework.schemas import get_schema_view
+# from rest_framework.schemas import get_schema_view
+from rest_framework import permissions
 from rest_framework.renderers import JSONOpenAPIRenderer
 
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+
+# schema_view = get_schema_view(
+#     title="apigram",
+#     description="API for all apigram endpoints",
+#     version="1.0.0",
+#     # urlconf='urls',
+#     renderer_classes=[JSONOpenAPIRenderer]
+# )
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Apigram API",
+      default_version='v1',
+      description="Apigram API",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="scofield.cross@gmail.com"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+   authentication_classes=[SessionAuthentication, TokenAuthentication]
+)
 
 urlpatterns = [
     path('', RedirectView.as_view(url='redoc/', permanent=False)),
     path('api/v1/', include('coreapi.urls')),
     path('admin/', admin.site.urls),
     
-    path('redoc/', TemplateView.as_view(
-        template_name='coreapi/redoc.html',
-        extra_context={'schema_url':'openapi-schema'}
-    ), name='redoc'),
-    path('openapi', get_schema_view(
-        title="apigram",
-        description="API for all apigram endpoints",
-        version="1.0.0",
-        # urlconf='urls',
-        renderer_classes=[JSONOpenAPIRenderer]
-    ), name='openapi-schema'),
-
+    # path('redoc/', TemplateView.as_view(
+    #     template_name='coreapi/redoc.html',
+    #     extra_context={'schema_url':'openapi-schema'}
+    # ), name='redoc'),
+    # path('openapi', schema_view, name='openapi-schema'),
+    # path('swagger(?P<format>\.json|\.yaml)', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
 

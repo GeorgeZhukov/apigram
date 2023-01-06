@@ -22,4 +22,5 @@ class CustomObtainAuthToken(ObtainAuthToken):
     """
     
     def post(self, request, *args, **kwargs):
+        print("my middleware {}".format(request.headers))
         return super().post(request, *args, **kwargs)

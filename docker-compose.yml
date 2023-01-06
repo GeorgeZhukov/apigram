@@ -18,7 +18,6 @@ services:
       test: ["CMD", "pg_isready", "-Upostgres", "-dapigram_development"]
   app:
     build: .
-    # command: uwsgi --socket :8000 --module apigram.wsgi
     command: uwsgi --ini /usr/src/app/uwsgi.ini
     links:
       - 'db'
@@ -36,7 +35,7 @@ services:
       - ./nginx:/etc/nginx/templates
       - app_data:/usr/src/app/apigram:ro
     ports:
-      - "80:8000"
+      - "443:8000"
     links:
       - app
     

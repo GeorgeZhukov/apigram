@@ -15,9 +15,10 @@ from .models import Account, Post, PostPhoto
 
 class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     """
-    **For authorized users**
 
     Returns a list of all **active** accounts in the system.
+
+    For authorized users only
     """
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
@@ -26,9 +27,10 @@ class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retr
 
 class PostViewSet(viewsets.ModelViewSet):
     """
-    **For authorized users**
 
     Returns a list of all **active** posts
+
+    For authorized users only
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
@@ -41,9 +43,11 @@ class PostViewSet(viewsets.ModelViewSet):
 # class PostPhotoViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):
 class PostPhotoViewSet(viewsets.ModelViewSet):
     """
-    **For authorized users**
 
     Returns a list of photos related to posts
+
+    For authorized users only
+
     """
     queryset = PostPhoto.objects.all()
     serializer_class = PostPhotoSerializer
@@ -54,6 +58,7 @@ class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     """
     This endpoint to create a new user
     After new user created, you should request a new authenetication token
+
     """
     queryset = User.objects.none()
     permission_classes = [permissions.AllowAny]

@@ -24,9 +24,15 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
+    # creator = serializers.ReadOnlyField(source='post.account.user.username')
+    # creator_id = serializers.ReadOnlyField(source='post.account.user.id')
+    # photo = serializers.ImageField(required=True)
     class Meta:
         model = PostPhoto
-        fields = [ 'id', 'post',  'photo' ]
+        fields = [ 'id', 'post',  'photo', 'author' ]
+        read_only_fields = ['id', 'post', 'author', 'photo']
+
+
 
     def create(self, validated_data):
         queryset = Post.objects.filter(author=self.context['request'].user.account)
@@ -38,21 +44,38 @@ class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    post_photos = PostPhotoSerializer(many=True, read_only=True)
+    # post_photos = serializers.PrimaryKeyRelatedField(many=True, queryset=PostPhoto.objects.filter(post=None))
+    post_photos = PostPhotoSerializer(many=True)
     
+    
+
 
     class Meta:
         model = Post
         read_only_fields = ['id', 'author', 'created_at', 'updated_at']
         fields = [ 'id', 'author', 'description', 'post_photos','created_at', 'updated_at' ]
 
+
     def create(self, validated_data):
         account = self.context['request'].user.account
+
+        keys = map(lambda post_photo: post_photo.pk, validated_data['post_photos'])
+        post_photos = PostPhoto.objects.filter(post__pk=None, pk__in=keys)
+
+        if not post_photos.exists():
+            raise serializers.ValidationError("No photos to add to post")
+
 
         post = Post.objects.create(
             author=account,
             description=validated_data['description']
         )
+
+        
+        updated = post_photos.update(post=post)
+        print("updated {}".format(updated))
+        
+
         return post
 
 

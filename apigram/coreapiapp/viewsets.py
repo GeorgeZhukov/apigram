@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, response, generics
 from rest_framework.viewsets import mixins
 from rest_framework import permissions
+from rest_framework.decorators import action
 
 import logging
 
@@ -38,6 +39,40 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 #     serializer_class = UserSerializer
 
 
+# class AuthViewSet(viewsets.ModelViewSet):
+#     """
+#     This resource act as auth controller
+#     """
+
+#     queryset = User.objects.all()
+#     serializer_class = AccountSerializer
+
+    
+#     @action(detail=False, methods=['post'])
+#     def request_token(self, request):
+#         """
+#         Request a new token
+
+#         Input: **username** and **password**
+
+#         Output: **token**
+#         """
+
+#         return response.Response({'status': 'password set'})
+
+#     @action(detail=False, methods=['post'])
+#     def registrate(self, request):
+#         """
+#         Create a new user/account
+
+#         Input: **username**, **password**, **password2**, **email**, **first_name**, **last_name**
+
+#         Output: **id**, **username**, **email**, **first_name**, **last_name**
+#         """
+
+#         return response.Response({'status': 'registered'})
+
+
 class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
     """
 
@@ -61,6 +96,10 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
+
+    def perform_create(self, serializer):
+        return serializer.save(author=self.request.user.account)
+
     
 
 
@@ -77,6 +116,9 @@ class PostPhotoViewSet(viewsets.ModelViewSet):
     queryset = PostPhoto.objects.all()
     serializer_class = PostPhotoSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        return serializer.save(author=self.request.user.account)
 
 
 class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):

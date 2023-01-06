@@ -48,7 +48,7 @@ class PostPhoto(CoreApiBaseModel):
 
 
 def save_account(sender, instance, **kwargs):
-    if not kwargs['created']:
+    if kwargs['created']:
         Account(user=instance).save()
 
 

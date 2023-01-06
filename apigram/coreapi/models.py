@@ -29,6 +29,10 @@ class Post(CoreApiBaseModel):
     def __str__(self) -> str:
         return '[{}] {}: {}'.format(self.pk, self.author, self.description)
 
+    @property
+    def owner(self) -> User:
+        return self.author.user
+
 
 
 class PostPhoto(CoreApiBaseModel):
@@ -40,6 +44,10 @@ class PostPhoto(CoreApiBaseModel):
             FileExtensionValidator(['jpg', 'jpeg'])
         ]
     )
+
+    @property
+    def owner(self) -> User:
+        return self.post.author.user
 
     def __str__(self) -> str:
         

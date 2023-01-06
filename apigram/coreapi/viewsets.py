@@ -4,8 +4,33 @@ from rest_framework import viewsets, response, generics
 from rest_framework.viewsets import mixins
 from rest_framework import permissions
 
+import logging
+
+
 from .serializers import AccountSerializer, PostSerializer, PostPhotoSerializer, RegisterSerializer
 from .models import Account, Post, PostPhoto
+
+logger = logging.getLogger(__name__)
+
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    """
+    Object-level permission to only allow owners of an object to edit it.
+    Assumes the model instance has an `owner` attribute.
+    """
+
+    def has_object_permission(self, request, view, obj):
+        try:
+            # Read permissions are allowed to any request,
+            # so we'll always allow GET, HEAD or OPTIONS requests.
+            if request.method in permissions.SAFE_METHODS:
+                return True
+
+            # Instance must have an attribute named `owner`.
+            return obj.owner == request.user
+        except Exception as e:
+            logger.warn("Exception while permission checking: {}".format(e))
+            
+            return False
 
 # ViewSets define the view behavior.
 # class UserViewSet(viewsets.ModelViewSet):
@@ -22,7 +47,7 @@ class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.Retr
     """
     queryset = Account.objects.all()
     serializer_class = AccountSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -34,7 +59,7 @@ class PostViewSet(viewsets.ModelViewSet):
     """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
     
 
@@ -51,7 +76,7 @@ class PostPhotoViewSet(viewsets.ModelViewSet):
     """
     queryset = PostPhoto.objects.all()
     serializer_class = PostPhotoSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
 
 class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):

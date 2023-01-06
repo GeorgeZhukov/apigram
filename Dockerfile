@@ -12,15 +12,11 @@ RUN apt-get update \
 COPY requirements.txt /tmp/requirements.txt
 
 RUN pip install --cache-dir /tmp/cache -r /tmp/requirements.txt \  
-    && rm -rf /tmp/requirements.txt \  
-    && useradd -U app_user \  
-    && install -d -m 0755 -o app_user -g app_user /app/static
+    && rm -rf /tmp/requirements.txt
 
 WORKDIR /app
 
-USER app_user:app_user
-
-COPY --chown=app_user:app_user apigram/ .
+COPY apigram/ .
 
 RUN python manage.py collectstatic --no-input
 

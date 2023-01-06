@@ -5,6 +5,7 @@ volumes:
   app_data_static:
   app_data_cache:
   app_data_media:
+  app_data_pip_cache:
 services:
   db:
     image: postgres:15.1
@@ -20,18 +21,21 @@ services:
       test: ["CMD", "pg_isready", "-Upostgres", "-dapigram_development"]
   app:
     build: .
-    command: uwsgi --ini /usr/src/app/uwsgi.ini
+    command: uwsgi --ini uwsgi.ini
     links:
       - 'db'
     restart: always
     ports:
       - 8000:8000
     volumes:
-      - app_data_static:/usr/src/app/apigram/static
-      - app_data_media:/usr/src/app/apigram/media
+      - app_data_static:/app/static
+      - app_data_media:/app/media
       - app_data_cache:/root/.cache
+      - app_data_pip_cache:/tmp/cache
     environment:
       - DJANGO_SETTINGS_MODULE=apigram.settings.docker
+      - DJANGO_STATIC_ROOT=/app/static
+      - DJANGO_MEDIA_ROOT=/app/media
 
   web:
     image: nginx

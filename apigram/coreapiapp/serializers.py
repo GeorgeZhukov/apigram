@@ -24,15 +24,11 @@ class AccountSerializer(serializers.ModelSerializer):
 
 
 class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
-    # creator = serializers.ReadOnlyField(source='post.account.user.username')
-    # creator_id = serializers.ReadOnlyField(source='post.account.user.id')
-    # photo = serializers.ImageField(required=True)
+    photo = serializers.ImageField( use_url=True, write_only=False)
+
     class Meta:
         model = PostPhoto
-        fields = [ 'id', 'post',  'photo', 'author' ]
-        read_only_fields = ['id', 'post', 'author', 'photo']
-
-
+        fields = ['id', 'photo']
 
     def create(self, validated_data):
         queryset = Post.objects.filter(author=self.context['request'].user.account)
@@ -43,19 +39,16 @@ class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
         return super().create(validated_data)
 
 
+
 class PostSerializer(serializers.ModelSerializer):
-    # post_photos = serializers.PrimaryKeyRelatedField(many=True, queryset=PostPhoto.objects.filter(post=None))
-    post_photos = PostPhotoSerializer(many=True)
-    
-    
-
-
     class Meta:
         model = Post
-        read_only_fields = ['id', 'author', 'created_at', 'updated_at']
+        
         fields = [ 'id', 'author', 'description', 'post_photos','created_at', 'updated_at' ]
 
-
+class CreatePostSerializer(PostSerializer):
+    post_photos = serializers.PrimaryKeyRelatedField(many=True, queryset=PostPhoto.objects.filter(post=None), write_only=True)
+ 
     def create(self, validated_data):
         account = self.context['request'].user.account
 
@@ -65,19 +58,23 @@ class PostSerializer(serializers.ModelSerializer):
         if not post_photos.exists():
             raise serializers.ValidationError("No photos to add to post")
 
-
         post = Post.objects.create(
             author=account,
             description=validated_data['description']
         )
-
         
         updated = post_photos.update(post=post)
-        print("updated {}".format(updated))
-        
 
         return post
 
+    class Meta(PostSerializer.Meta):
+        read_only_fields = ['id', 'author', 'created_at', 'updated_at']
+
+class ListPostSerializer(PostSerializer):
+    post_photos = PostPhotoSerializer(many=True, read_only=True)
+
+    class Meta(PostSerializer.Meta):
+        read_only_fields = ['id', 'author', 'post_photos', 'created_at', 'updated_at']
 
 
 class RegisterSerializer(serializers.ModelSerializer):

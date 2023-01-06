@@ -4,6 +4,7 @@ from .router import router
 from .views import CustomObtainAuthToken
 
 
+
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [

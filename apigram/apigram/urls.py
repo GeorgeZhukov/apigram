@@ -26,6 +26,7 @@ from django.views.generic import TemplateView
 from rest_framework.schemas import get_schema_view
 from rest_framework.renderers import JSONOpenAPIRenderer
 
+
 urlpatterns = [
     path('', RedirectView.as_view(url='redoc/', permanent=False)),
     path('api/v1/', include('coreapi.urls')),
@@ -42,6 +43,7 @@ urlpatterns = [
         # urlconf='urls',
         renderer_classes=[JSONOpenAPIRenderer]
     ), name='openapi-schema'),
+
 ]
 
 

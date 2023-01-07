@@ -6,7 +6,7 @@ ENV DJANGO_SETTINGS_MODULE="apigram.settings.docker"
 
 
 RUN apt-get update \  
-  && apt-get install -y --no-install-recommends build-essential libpq-dev \  
+  && apt-get install -y --no-install-recommends git build-essential libpq-dev curl \  
   && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /tmp/requirements.txt

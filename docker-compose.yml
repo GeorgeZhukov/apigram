@@ -37,8 +37,13 @@ services:
       - DJANGO_STATIC_ROOT=/app/static
       - DJANGO_MEDIA_ROOT=/app/media
 
+    healthcheck:
+      test: curl --silent --fail https://apigram.crabdance.com/api/v1/ || exit 1
+
+
   web:
     image: nginx
+    restart: always
     volumes:
       - ./nginx:/etc/nginx/templates
       - app_data_static:/usr/src/app/apigram/static:ro
@@ -47,4 +52,7 @@ services:
       - "443:8000"
     links:
       - app
+    healthcheck:
+      test: service nginx status || exit 1
+
     

@@ -10,7 +10,7 @@ ALLOWED_HOSTS = ['apigram.crabdance.com', '141.148.245.194', '127.0.0.1', 'local
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'apigram_development',
+        'NAME': os.environ.get('POSTGRES_DB'),
         'USER': 'postgres',
         'HOST': 'db',
     }

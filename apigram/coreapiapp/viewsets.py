@@ -8,7 +8,7 @@ from rest_framework.decorators import action
 import logging
 
 
-from .serializers import AccountSerializer, CreatePostSerializer, ListPostSerializer, PostPhotoSerializer, RegisterSerializer
+from .serializers import AccountSerializer, PostSerializer, PostPhotoSerializer, RegisterSerializer
 from .models import Account, Post, PostPhoto
 
 logger = logging.getLogger(__name__)
@@ -97,13 +97,9 @@ class PostViewSet(viewsets.ModelViewSet):
     """
 
     queryset = Post.objects.all()
-    serializer_class = ListPostSerializer
+    serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
-    def get_serializer_class(self):
-        if self.action == 'create':
-            return CreatePostSerializer
-        return super().get_serializer_class()
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user.account)
 

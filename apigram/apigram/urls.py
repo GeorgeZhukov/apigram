@@ -20,11 +20,7 @@ from django.views.generic.base import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
-
 
 urlpatterns = [
     path('', RedirectView.as_view(url='api/schema/swagger-ui/', permanent=False)),

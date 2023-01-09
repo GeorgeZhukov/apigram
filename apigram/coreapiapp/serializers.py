@@ -31,7 +31,6 @@ class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AuthorFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
-
     def get_queryset(self):
         request = self.context.get('request', None)
         queryset = super(AuthorFilteredPrimaryKeyRelatedField, self).get_queryset()

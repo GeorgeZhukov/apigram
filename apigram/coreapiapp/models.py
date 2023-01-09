@@ -24,8 +24,6 @@ class Account(CoreApiBaseModel):
         return self.user.__str__()
 
 
-
-
 class Post(CoreApiBaseModel):
     author = models.ForeignKey(Account, on_delete=models.CASCADE)
     description = models.TextField()
@@ -57,7 +55,6 @@ class PostPhoto(CoreApiBaseModel):
         return self.author.user
 
     def __str__(self) -> str:
-        
         return '[{}] {}'.format(self.post, self.photo.name)
 
 

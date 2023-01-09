@@ -7,8 +7,6 @@ from .models import Post, PostPhoto, Account
 # Register your models here.
 
 
-
-
 @admin.register(PostPhoto)
 class PostPhotoAdmin(admin.ModelAdmin):
     pass

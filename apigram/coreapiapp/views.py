@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 
 
-
+# TODO: remove/replace with viewset
 class CustomObtainAuthToken(ObtainAuthToken):
     """
     This endpoint returns token

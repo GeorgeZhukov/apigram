@@ -33,11 +33,6 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             
             return False
 
-# ViewSets define the view behavior.
-# class UserViewSet(viewsets.ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-
 
 # class AuthViewSet(viewsets.ModelViewSet):
 #     """
@@ -73,7 +68,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 #         return response.Response({'status': 'registered'})
 
 
-class AccountViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.RetrieveModelMixin):
+class AccountViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     Returns a list of all **active** accounts in the system.
@@ -102,11 +97,6 @@ class PostViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user.account)
-
-
-
-    
-
 
 
 # class PostPhotoViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.ListModelMixin):

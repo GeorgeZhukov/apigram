@@ -39,6 +39,15 @@ class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
         return super().create(validated_data)
 
 
+class AuthorFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+    def get_queryset(self):
+        request = self.context.get('request', None)
+        queryset = super(AuthorFilteredPrimaryKeyRelatedField, self).get_queryset()
+        if not request or not queryset:
+            return None
+        return queryset.filter(author=request.user.account)
+
+
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,13 +56,18 @@ class PostSerializer(serializers.ModelSerializer):
         fields = [ 'id', 'author', 'description', 'post_photos','created_at', 'updated_at' ]
 
 class CreatePostSerializer(PostSerializer):
-    post_photos = serializers.PrimaryKeyRelatedField(many=True, queryset=PostPhoto.objects.filter(post=None), write_only=True)
+    post_photos = AuthorFilteredPrimaryKeyRelatedField(many=True, queryset=PostPhoto.objects.filter(post=None,), write_only=True)
  
     def create(self, validated_data):
         account = self.context['request'].user.account
 
         keys = map(lambda post_photo: post_photo.pk, validated_data['post_photos'])
-        post_photos = PostPhoto.objects.filter(post__pk=None, pk__in=keys)
+
+        post_photos = PostPhoto.objects.filter(
+            post__pk=None, 
+            pk__in=keys, 
+            author=account,
+        )
 
         if not post_photos.exists():
             raise serializers.ValidationError("No photos to add to post")

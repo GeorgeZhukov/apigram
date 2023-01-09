@@ -6,16 +6,9 @@ upstream django {
 # configuration of the server
 server {
     # the port your site will be served on
-    # listen 8000;
-    # server_name localhost;
+    listen 8000;
+    server_name localhost;
 
-    listen 8000 ssl;
-
-    server_name apigram.crabdance.com;
-
-    ssl_certificate     /etc/nginx/templates/cert.pem;
-    ssl_certificate_key /etc/nginx/templates/key.pem;
-    
     # the domain name it will serve for
     charset     utf-8;
 

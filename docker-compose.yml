@@ -36,6 +36,8 @@ services:
       - DJANGO_SETTINGS_MODULE=apigram.settings.docker
       - DJANGO_STATIC_ROOT=/app/static
       - DJANGO_MEDIA_ROOT=/app/media
+    depends_on:
+      - db
 
     healthcheck:
       test: curl --silent --fail https://apigram.crabdance.com/api/v1/ || exit 1
@@ -52,7 +54,8 @@ services:
       - "443:8000"
     links:
       - app
+    depends_on:
+      - app
     healthcheck:
       test: service nginx status || exit 1
-
     

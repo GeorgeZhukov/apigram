@@ -2,9 +2,10 @@ from .base import *
 
 import os
 
-DEBUG = True
+DEBUG = False
+ALLOWED_HOSTS = ['apigram.crabdance.com', '141.148.245.194', '127.0.0.1', 'localhost']
 # ALLOWED_HOSTS = ['141.148.245.194', '127.0.0.1', 'localhost']
-ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['*']
 
 DATABASES = {
     'default': {

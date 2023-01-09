@@ -24,6 +24,25 @@ class Account(CoreApiBaseModel):
         return self.user.__str__()
 
 
+class AccountPhoto(CoreApiBaseModel):
+    account = models.OneToOneField(Account, on_delete=models.CASCADE, related_name='account_photo', null=True)
+    photo = ProcessedImageField(
+        upload_to='account_photos',
+        processors=[ResizeToFill(1440, 1440)],
+        format='JPEG',
+        unique=True,
+        default='account_photos/default.jpg'
+        
+    )
+
+    def __str__(self) -> str:
+        return '[{}] {}'.format(self.account, self.photo.name)
+
+    @property
+    def owner(self) -> User:
+        return self.account.user
+
+
 class Post(CoreApiBaseModel):
     author = models.ForeignKey(Account, on_delete=models.CASCADE)
     description = models.TextField()

@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
-
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
@@ -30,22 +29,16 @@ class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
         model = PostPhoto
         fields = ['id', 'photo']
 
-    def create(self, validated_data):
-        queryset = Post.objects.filter(author=self.context['request'].user.account)
-        if 'post' in validated_data and validated_data['post']:
-            if not queryset.filter(pk=validated_data['post'].pk).exists():
-                raise serializers.ValidationError("You can't add photos to other users posts")
-
-        return super().create(validated_data)
-
 
 class AuthorFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
+
     def get_queryset(self):
         request = self.context.get('request', None)
         queryset = super(AuthorFilteredPrimaryKeyRelatedField, self).get_queryset()
         if not request or not queryset:
-            return None
+            return queryset.none()
         return queryset.filter(author=request.user.account)
+
 
 
 
@@ -53,31 +46,31 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         
-        fields = [ 'id', 'author', 'description', 'post_photos','created_at', 'updated_at' ]
+        fields = [ 'id', 'author', 'description', 'post_photos','created_at', 'updated_at', 'photos' ]
 
-class CreatePostSerializer(PostSerializer):
-    post_photos = AuthorFilteredPrimaryKeyRelatedField(many=True, queryset=PostPhoto.objects.filter(post=None,), write_only=True)
+class PostSerializer(PostSerializer):
+    post_photos = AuthorFilteredPrimaryKeyRelatedField( many=True, queryset=PostPhoto.objects.filter(post=None,), write_only=True)
+    photos = PostPhotoSerializer(many=True, read_only=True, source='post_photos')
+
+    def validate_post_photos(self, post_photos: list[PostPhoto]):
+        account = self.context['request'].user.account
+        pk_list = map(lambda item: item.pk, post_photos)
+        queryset = account.postphoto_set.filter(pk__in=pk_list, post=None)
+        if not queryset.exists():
+            raise serializers.ValidationError(detail='No photos to add to post')
+        return queryset
+
  
     def create(self, validated_data):
         account = self.context['request'].user.account
-
-        keys = map(lambda post_photo: post_photo.pk, validated_data['post_photos'])
-
-        post_photos = PostPhoto.objects.filter(
-            post__pk=None, 
-            pk__in=keys, 
-            author=account,
-        )
-
-        if not post_photos.exists():
-            raise serializers.ValidationError("No photos to add to post")
 
         post = Post.objects.create(
             author=account,
             description=validated_data['description']
         )
-        
-        updated = post_photos.update(post=post)
+
+        pk_list = map(lambda item: item.pk, validated_data['post_photos'])
+        _updated = account.postphoto_set.filter(pk__in=pk_list).update(post=post)
 
         return post
 

@@ -10,13 +10,10 @@ services:
   db:
     image: postgres:15.1
     restart: always
-    environment:
-      POSTGRES_DB: apigram_development
-      POSTGRES_HOST_AUTH_METHOD: trust
-
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
     healthcheck:
       test:
         [
@@ -26,24 +23,18 @@ services:
           "-dapigram_development"
         ]
   app:
-    platform: linux/amd64
     build: .
+    platform: linux/amd64
     image: georgezhukov/apigram:latest
     command: uwsgi --ini uwsgi.ini
-    environment:
-      - DJANGO_SETTINGS_MODULE=apigram.settings.docker
-      - DJANGO_STATIC_ROOT=/app/static
-      - DJANGO_MEDIA_ROOT=/app/media
-    
     restart: always
+    env_file:
+      - .env
     volumes:
       - app_data_static:/app/static
       - app_data_media:/app/media
-
-
     depends_on:
       - db
-
     healthcheck:
       test: curl --silent --fail https://apigram.crabdance.com/api/v1/ || exit 1
 

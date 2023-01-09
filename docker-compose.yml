@@ -10,40 +10,42 @@ services:
   db:
     image: postgres:15.1
     restart: always
-    ports:
-      - 5433:5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: apigram_development
       POSTGRES_HOST_AUTH_METHOD: trust
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
     healthcheck:
-      test: ["CMD", "pg_isready", "-Upostgres", "-dapigram_development"]
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-Upostgres",
+          "-dapigram_development"
+        ]
   app:
     platform: linux/amd64
     build: .
     image: georgezhukov/apigram:latest
     command: uwsgi --ini uwsgi.ini
-    links:
-      - 'db'
-    restart: always
-    ports:
-      - 8000:8000
-    volumes:
-      - app_data_static:/app/static
-      - app_data_media:/app/media
-      - app_data_cache:/root/.cache
-      - app_data_pip_cache:/tmp/cache
     environment:
       - DJANGO_SETTINGS_MODULE=apigram.settings.docker
       - DJANGO_STATIC_ROOT=/app/static
       - DJANGO_MEDIA_ROOT=/app/media
+    
+    restart: always
+    volumes:
+      - app_data_static:/app/static
+      - app_data_media:/app/media
+
+
     depends_on:
       - db
 
     healthcheck:
       test: curl --silent --fail https://apigram.crabdance.com/api/v1/ || exit 1
-
 
   web:
     image: nginx
@@ -52,12 +54,9 @@ services:
       - ./nginx:/etc/nginx/templates
       - app_data_static:/usr/src/app/apigram/static:ro
       - app_data_media:/usr/src/app/apigram/media:ro
-    ports:
-      - "80:8000"
     links:
       - app
     depends_on:
       - app
     healthcheck:
       test: service nginx status || exit 1
-    

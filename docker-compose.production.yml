@@ -7,20 +7,21 @@ volumes:
   app_data_media:
   app_data_pip_cache:
 services:
-
+  app:
+    platform: linux/amd64
+    image: georgezhukov/apigram:latest
+    volumes:
+      - app_data_static:/app/static
+      - app_data_media:/app/media
+      - app_data_cache:/root/.cache
+      - app_data_pip_cache:/tmp/cache
+    healthcheck:
+      test: curl --silent --fail https://apigram.crabdance.com/api/v1/ || exit 1
   web:
-    image: nginx
-    restart: always
     volumes:
       - ../nginx:/etc/nginx/templates
       - app_data_static:/usr/src/app/apigram/static:ro
       - app_data_media:/usr/src/app/apigram/media:ro
     ports:
       - "443:8000"
-    links:
-      - app
-    depends_on:
-      - app
-    healthcheck:
-      test: service nginx status || exit 1
-    
+

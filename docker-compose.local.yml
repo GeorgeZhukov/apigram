@@ -1,0 +1,20 @@
+version: '3.9'
+
+volumes:
+  postgres_data:
+  app_data_static:
+  app_data_cache:
+  app_data_media:
+  app_data_pip_cache:
+services:
+  db:
+    ports:
+      - 5433:5432
+  app:
+    build: .
+    environment:
+      - SECRET_KEY=value
+  web:
+    ports:
+      - "80:8000"
+

@@ -52,10 +52,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 'drf_yasg',
 
     'rest_framework',
     'rest_framework.authtoken',
+
+    'django_filters',
     
     'imagekit',
 
@@ -104,14 +105,6 @@ WSGI_APPLICATION = 'apigram.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 
 DATABASES = {
     'default': {
@@ -170,6 +163,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
@@ -189,10 +184,10 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'Apigram API',
     'DESCRIPTION': 'Simple api to serve images for swift ios application clients, in instagram manner',
     'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-    # OTHER SETTINGS
-}
 
+    'SERVE_INCLUDE_SCHEMA': False,
+
+}
 MEDIA_URL = '/media/'
 
 

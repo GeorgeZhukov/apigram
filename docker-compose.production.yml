@@ -1,0 +1,26 @@
+version: '3.9'
+
+volumes:
+  postgres_data:
+  app_data_static:
+  app_data_cache:
+  app_data_media:
+  app_data_pip_cache:
+services:
+
+  web:
+    image: nginx
+    restart: always
+    volumes:
+      - ../nginx:/etc/nginx/templates
+      - app_data_static:/usr/src/app/apigram/static:ro
+      - app_data_media:/usr/src/app/apigram/media:ro
+    ports:
+      - "443:8000"
+    links:
+      - app
+    depends_on:
+      - app
+    healthcheck:
+      test: service nginx status || exit 1
+    

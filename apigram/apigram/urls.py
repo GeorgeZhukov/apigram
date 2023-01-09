@@ -62,8 +62,6 @@ urlpatterns = [
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
-
-    path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
     path('swifty_panel/', admin.site.urls),
 
     

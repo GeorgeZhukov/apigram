@@ -53,7 +53,7 @@ services:
       - app_data_static:/usr/src/app/apigram/static:ro
       - app_data_media:/usr/src/app/apigram/media:ro
     ports:
-      - "443:8000"
+      - "80:8000"
     links:
       - app
     depends_on:

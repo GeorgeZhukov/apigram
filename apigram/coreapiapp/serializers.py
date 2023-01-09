@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
@@ -31,7 +32,6 @@ class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AuthorFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
-
     def get_queryset(self):
         request = self.context.get('request', None)
         queryset = super(AuthorFilteredPrimaryKeyRelatedField, self).get_queryset()

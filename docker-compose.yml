@@ -20,7 +20,9 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-Upostgres", "-dapigram_development"]
   app:
+    platform: linux/amd64
     build: .
+    image: georgezhukov/apigram:latest
     command: uwsgi --ini uwsgi.ini
     links:
       - 'db'

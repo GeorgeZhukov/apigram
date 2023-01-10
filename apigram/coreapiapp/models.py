@@ -30,7 +30,6 @@ class AccountPhoto(CoreApiBaseModel):
         upload_to='account_photos',
         processors=[ResizeToFill(1440, 1440)],
         format='JPEG',
-        unique=True,
         default='account_photos/default.jpg'
         
     )
@@ -80,7 +79,10 @@ class PostPhoto(CoreApiBaseModel):
 
 def save_account(sender, instance, **kwargs):
     if kwargs['created']:
-        Account(user=instance).save()
+        account = Account(user=instance)
+        account.save()
+
+
 
 
 post_save.connect(save_account, sender=User)

@@ -10,10 +10,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 import logging
 
 
-from .serializers import AccountSerializer, PostSerializer, PostPhotoSerializer, RegisterSerializer
-from .models import Account, Post, PostPhoto
+from .serializers import AccountSerializer, PostSerializer, PostPhotoSerializer, RegisterSerializer, AccountPhotoSerializer
+from .models import Account, Post, PostPhoto, AccountPhoto
 
 logger = logging.getLogger(__name__)
+
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
     """
@@ -32,7 +33,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return obj.owner == request.user
         except Exception as e:
             logger.warn("Exception while permission checking: {}".format(e))
-            
+
             return False
 
 
@@ -44,7 +45,7 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 #     queryset = User.objects.all()
 #     serializer_class = AccountSerializer
 
-    
+
 #     @action(detail=False, methods=['post'])
 #     def request_token(self, request):
 #         """
@@ -87,6 +88,39 @@ class AccountViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
     filter_backends = [filters.SearchFilter]
     search_fields = ['user__username', ]
+
+
+class AccountPhotoViewSet(viewsets.ModelViewSet):
+    """
+
+    Resource of account photos
+
+    **Create** - When creating a new photo, previous photos are **`DELETED`** for this account
+
+    For authorized users only
+    """
+    # schema = AutoSchema(
+    #     tags=['AccountPhoto'],
+    #     component_name='AccountPhoto',
+    #     operation_id_base='AccountPhoto',
+    # )
+    queryset = AccountPhoto.objects.all()
+    serializer_class = AccountPhotoSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
+
+    def perform_create(self, serializer):
+        account = self.request.user.account
+
+        try:
+            result = serializer.save(account=account)
+            print("Result: {}".format(result))
+        finally:
+            query = AccountPhoto.objects.filter(account=account)
+            if query.exists():
+                latest = query.latest('created_at')
+                query.exclude(pk=latest.pk).delete()
+
+        return result
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -137,6 +171,7 @@ class PostPhotoViewSet(viewsets.ModelViewSet):
 
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ['=post__id']
+
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user.account)
 
@@ -155,3 +190,9 @@ class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     queryset = User.objects.none()
     permission_classes = [permissions.AllowAny]
     serializer_class = RegisterSerializer
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        user.set_password(serializer.validated_data['password'])
+
+        return user.save()

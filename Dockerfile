@@ -9,6 +9,8 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends git build-essential libpq-dev curl \  
   && rm -rf /var/lib/apt/lists/*
 
+RUN pip install uwsgi
+
 COPY requirements.txt /tmp/requirements.txt
 
 RUN pip install --cache-dir /tmp/cache -r /tmp/requirements.txt \  

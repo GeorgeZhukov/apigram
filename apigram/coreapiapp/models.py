@@ -20,6 +20,7 @@ class CoreApiBaseModel(models.Model):
 class Account(CoreApiBaseModel):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='account')
 
+
     def __str__(self) -> str:
         return self.user.__str__()
 
@@ -81,6 +82,7 @@ def save_account(sender, instance, **kwargs):
     if kwargs['created']:
         account = Account(user=instance)
         account.save()
+        AccountPhoto(account=account).save()
 
 
 

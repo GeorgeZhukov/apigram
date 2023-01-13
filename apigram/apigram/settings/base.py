@@ -27,7 +27,7 @@ class CustomHeaderMiddleware(MiddlewareMixin):
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -205,5 +205,8 @@ SWAGGER_SETTINGS = {
    'PERSIST_AUTH': True,
    'REFETCH_SCHEMA_WITH_AUTH': True,
 }
+
+STATIC_ROOT = os.environ.get('DJANGO_STATIC_ROOT', BASE_DIR / "static")
+MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_ROOT', BASE_DIR / "media")
 
 

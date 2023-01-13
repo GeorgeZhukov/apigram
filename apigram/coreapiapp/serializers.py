@@ -15,13 +15,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'is_active', 'date_joined']
 
 
-class AccountPhotoSerializer(serializers.ModelSerializer):
+class AccountPhotoSerializer(serializers.HyperlinkedModelSerializer):
     photo = serializers.ImageField(use_url=True, write_only=False)
 
     class Meta:
         model = AccountPhoto
         read_only_fields = ['id', 'account', 'created_at']
-        fields = ['photo']
+        fields = ['id', 'account', 'photo', 'updated_at']
 
 
 class AccountSerializer(serializers.ModelSerializer):

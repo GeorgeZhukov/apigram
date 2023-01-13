@@ -90,7 +90,7 @@ class AccountViewSet(viewsets.ReadOnlyModelViewSet):
     search_fields = ['user__username', ]
 
 
-class AccountPhotoViewSet(viewsets.ModelViewSet):
+class AccountPhotoViewSet(viewsets.GenericViewSet, mixins.UpdateModelMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin):
     """
 
     Resource of account photos

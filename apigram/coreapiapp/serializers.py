@@ -16,21 +16,29 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AccountPhotoSerializer(serializers.HyperlinkedModelSerializer):
+    '''
+    **photo** - large version of the photo
+
+    **photo_thumbnail** - small version of the photo, specially to effectively display list of records
+    '''
     photo = serializers.ImageField(use_url=True, write_only=False)
+    photo_thumbnail = serializers.ImageField(use_url=True, read_only=True)
 
     class Meta:
         model = AccountPhoto
         read_only_fields = ['id', 'account', 'created_at']
-        fields = ['id', 'account', 'photo', 'updated_at']
+        fields = ['id', 'account', 'photo', 'photo_thumbnail', 'updated_at']
 
 
-class AccountSerializer(serializers.ModelSerializer):
+
+class AccountSerializer(serializers.HyperlinkedModelSerializer):
     user = UserSerializer(many=False, read_only=True)
-    account_photo = serializers.ImageField(source='account_photo.photo')
+    account_photo_thumbnail_url = serializers.ImageField(source='account_photo.photo_thumbnail')
 
     class Meta:
         model = Account
-        fields = ['id', 'user', 'account_photo', 'created_at', 'updated_at']
+        fields = ['id', 'user', 'account_photo',
+                  'account_photo_thumbnail_url', 'created_at', 'updated_at']
 
 
 class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,7 +46,7 @@ class PostPhotoSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = PostPhoto
-        fields = ['id', 'photo']
+        fields = ['id', 'photo', ]
 
 
 class AuthorFilteredPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
@@ -82,6 +90,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
+
         read_only_fields = ['id', 'author', 'created_at', 'updated_at']
         fields = ['id', 'author', 'description', 'post_photos',
                   'photos', 'created_at', 'updated_at']

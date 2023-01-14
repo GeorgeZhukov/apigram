@@ -22,12 +22,17 @@ services:
           "-Upostgres",
           "-dapigram_development"
         ]
-  app:
+    ports:
+      - 5433:5432
+    profiles:
+      - development
+      - production
+  app_dev:
     build: .
-    platform: linux/amd64
-    image: georgezhukov/apigram:latest
-    command: uwsgi --ini uwsgi.ini
+    command: uwsgi --http 0.0.0.0:8000 --module apigram.wsgi
     restart: always
+    ports:
+      - 8000:8000
     env_file:
       - .env
     volumes:
@@ -35,19 +40,50 @@ services:
       - app_data_media:/app/media
     depends_on:
       - db
+    profiles:
+      - development
+
+
+  app:
+    build:
+      context: .
+
+      args:
+        - DJANGO_MEDIA_ROOT=${DJANGO_MEDIA_ROOT}
+    platform: linux/amd64
+    image: georgezhukov/apigram:latest
+    command: uwsgi --socket 0.0.0.0:8000 --module apigram.wsgi
+    restart: always
+    env_file:
+      - .env
+    # ports:
+      # - 80:8000
+    volumes:
+      - app_data_static:/app/static
+      - app_data_media:/app/media
+      - app_data_cache:/root/.cache
+      - app_data_pip_cache:/tmp/cache
+    depends_on:
+      - db
     healthcheck:
       test: curl --silent --fail https://apigram.crabdance.com/api/v1/ || exit 1
+    profiles:
+      - production
 
   web:
     image: nginx
     restart: always
     volumes:
-      - ./nginx:/etc/nginx/templates
+      - /home/scofield_cross/nginx:/etc/nginx/templates
       - app_data_static:/usr/src/app/apigram/static:ro
       - app_data_media:/usr/src/app/apigram/media:ro
     links:
       - app
     depends_on:
       - app
+    ports:
+      - "443:8000"
     healthcheck:
       test: service nginx status || exit 1
+    profiles:
+      - production

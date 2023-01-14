@@ -1,5 +1,9 @@
 FROM python:3.11-slim
 
+ARG DJANGO_MEDIA_ROOT
+
+ENV DJANGO_MEDIA_ROOT ${DJANGO_MEDIA_ROOT}
+
 ENV PYTHONUNBUFFERED 1  
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV DJANGO_SETTINGS_MODULE="apigram.settings.docker"
@@ -19,6 +23,8 @@ RUN pip install --cache-dir /tmp/cache -r /tmp/requirements.txt \
 WORKDIR /app
 
 COPY apigram/ .
+
+COPY assets/default.jpeg $DJANGO_MEDIA_ROOT/account_photos/
 
 RUN python manage.py collectstatic --no-input
 

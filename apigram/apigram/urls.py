@@ -26,13 +26,15 @@ from rest_framework.authentication import SessionAuthentication, TokenAuthentica
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
-    re_path(r'^api/v1/', include('coreapiapp.urls', namespace='v1')),
     path('', RedirectView.as_view(url='api/schema/swagger-ui/', permanent=False)),
     # path('api/v1/', include('coreapiapp.urls')),
     # path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     # Optional UI:
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='openapi-schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='openapi-schema'), name='redoc'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    re_path(r'^api/v1/', include('coreapiapp.urls', namespace='v1')),
     path('admin/', include('admin_honeypot.urls', namespace='admin_honeypot')),
     path('swifty_panel/', admin.site.urls),
     # path('openapi', get_schema_view(

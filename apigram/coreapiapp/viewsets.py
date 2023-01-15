@@ -9,7 +9,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 import logging
 
-
 from .serializers import AccountSerializer, PostSerializer, PostPhotoSerializer, RegisterSerializer, AccountPhotoSerializer
 from .models import Account, Post, PostPhoto, AccountPhoto
 
@@ -42,38 +41,55 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
             return False
 
 
-# class AuthViewSet(viewsets.ModelViewSet):
-#     """
-#     This resource act as auth controller
-#     """
+# class MyAuthTokenSerializer(AuthTokenSerializer):
+#     account = AccountSerializer(read_only=True)
 
-#     queryset = User.objects.all()
-#     serializer_class = AccountSerializer
+# class AuthViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.CreateModelMixin, mixins.ListModelMixin, ObtainAuthToken):
+#     queryset = User.objects.none()
+#     serializer_class = AuthTokenSerializer
+#     renderer_classes = [renderers.BrowsableAPIRenderer, renderers.JSONRenderer]
+#     permission_classes = [permissions.AllowAny]
+#     versioning_class = CurrentVersioning
+
+#     def get_permissions(self):
+#         if self.action == 'list':
+#           return [permissions.IsAuthenticated()]
+
+#         return super().get_permissions()
+    
+#     def get_serializer_class(self):
+#         if self.action == 'create':
+#             return RegisterSerializer
+#         return super().get_serializer_class()
+
+#     def get_queryset(self):
+#         return Account.objects.filter(user=self.request.user)
+
+#     def list(self, request, *args, **kwargs):
+#         account = self.request.user.account
+#         account_serializer = AccountSerializer(account, context={'request': request})
+#         return response.Response(account_serializer.data)
+
+#     def perform_create(self, serializer):
+#         user = serializer.save()
+#         user.set_password(serializer.validated_data['password'])
+
+#         return user.save()
+
+    
+#     @action(methods=['post', 'get'], detail=False)
+#     def login(self, request):
+#         if self.request.method == 'GET':
+#             try:
+#                 account = self.request.user.account
+#                 account_serializer = AccountSerializer(account, context={'request': request})
+#                 return response.Response(account_serializer.data)
+#             except Exception as e:
+#                 raise PermissionDenied("Unknown error while receive account details", "login_account_error")
+
+#         return super(AuthViewSet, self).post(request=request)
 
 
-#     @action(detail=False, methods=['post'])
-#     def request_token(self, request):
-#         """
-#         Request a new token
-
-#         Input: **username** and **password**
-
-#         Output: **token**
-#         """
-
-#         return response.Response({'status': 'password set'})
-
-#     @action(detail=False, methods=['post'])
-#     def registrate(self, request):
-#         """
-#         Create a new user/account
-
-#         Input: **username**, **password**, **password2**, **email**, **first_name**, **last_name**
-
-#         Output: **id**, **username**, **email**, **first_name**, **last_name**
-#         """
-
-#         return response.Response({'status': 'registered'})
 
 
 class AccountViewSet(viewsets.ReadOnlyModelViewSet):
@@ -196,20 +212,6 @@ class RegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
     """
         This endpoint to create a new user
         After new user created, you should request a new authenetication token [see here][ref]
-        # Tutorial (displayed in the left navigation)
-        # Errors
-
-        We follow the error response format proposed in [RFC 7807](https://tools.ietf.org/html/rfc7807)
-        also known as Problem Details for HTTP APIs. As with our normal API responses,
-        your client must be prepared to gracefully handle additional members of the response.
-
-        ## Unauthorized
-
-            <RedocResponse pointer={"#/components/responses/Unauthorized"} />
-
-        ## AccessForbidden
-
-            <RedocResponse pointer={"#/components/responses/AccessForbidden"} />
 
         [ref]: ./v1_auth_create
     """

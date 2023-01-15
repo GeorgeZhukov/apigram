@@ -7,13 +7,15 @@ volumes:
   app_data_media:
   app_data_pip_cache:
 services:
-  db:
+  db: &db
     image: postgres:15.1
     restart: always
     env_file:
       - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    profiles:
+      - production
     healthcheck:
       test:
         [
@@ -22,11 +24,12 @@ services:
           "-Upostgres",
           "-dapigram_development"
         ]
-    ports:
-      - 5433:5432
+  db_dev: 
+    <<: *db
     profiles:
       - development
-      - production
+    ports:
+      - 5433:5432
   app_dev:
     build:
       context: .
@@ -37,6 +40,8 @@ services:
     restart: always
     ports:
       - 8000:8000
+    links:
+      - db_dev:db
     env_file:
       - .env
     environment:

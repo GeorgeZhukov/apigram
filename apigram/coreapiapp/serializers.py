@@ -26,14 +26,15 @@ class AccountPhotoSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = AccountPhoto
-        read_only_fields = ['id', 'account', 'created_at']
+        read_only_fields = ['id', 'account',
+                            'photo', 'photo_thumbnail', 'created_at']
         fields = ['id', 'account', 'photo', 'photo_thumbnail', 'updated_at']
-
 
 
 class AccountSerializer(serializers.HyperlinkedModelSerializer):
     user = UserSerializer(many=False, read_only=True)
-    account_photo_thumbnail_url = serializers.ImageField(source='account_photo.photo_thumbnail')
+    account_photo_thumbnail_url = serializers.ImageField(
+        source='account_photo.photo_thumbnail')
 
     class Meta:
         model = Account
@@ -96,25 +97,44 @@ class PostSerializer(serializers.ModelSerializer):
                   'photos', 'created_at', 'updated_at']
 
 
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(serializers.HyperlinkedModelSerializer):
     email = serializers.EmailField(
         required=True,
         validators=[
             UniqueValidator(queryset=User.objects.all())
-        ]
+        ],
+        write_only=True,
     )
 
     password = serializers.CharField(
-        write_only=True, required=True, validators=[validate_password])
-    password2 = serializers.CharField(write_only=True, required=True)
+        label="Password",
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        write_only=True,
+        required=True,
+        validators=[validate_password]
+    )
+    password2 = serializers.CharField(
+        label="Password Confirmation",
+        style={'input_type': 'password'},
+        trim_whitespace=False,
+        write_only=True,
+        required=True
+    )
+
+    account = serializers.HyperlinkedRelatedField('accounts_detail', read_only=True)
 
     class Meta:
         model = User
+        read_only_fields = ['account']
+        
+
+        write_only_fields = ['first_name', 'last_name', 'email', 'password']
         fields = ('username', 'password', 'password2',
-                  'email', 'first_name', 'last_name')
+                  'email', 'first_name', 'last_name', 'account')
         extra_kwargs = {
-            'first_name': {'required': True},
-            'last_name': {'required': True}
+            'first_name': {'required': True, 'write_only': True},
+            'last_name': {'required': True, 'write_only': True}
         }
 
     def validate(self, attrs):

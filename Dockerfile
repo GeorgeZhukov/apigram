@@ -23,11 +23,10 @@ RUN pip install --cache-dir /tmp/cache -r /tmp/requirements.txt \
 WORKDIR /app
 
 COPY apigram/ .
+COPY assets/default.jpg $DJANGO_MEDIA_ROOT/account_photos/
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 
-COPY assets/default.jpeg $DJANGO_MEDIA_ROOT/account_photos/
+RUN chmod a+x /app/docker-entrypoint.sh
 
-RUN python manage.py collectstatic --no-input
 
-EXPOSE 8000
-
-CMD python manage.py runserver 0.0.0.0:8000
+ENTRYPOINT ["/app/docker-entrypoint.sh"]

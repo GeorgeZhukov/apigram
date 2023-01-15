@@ -1,10 +1,12 @@
 asgiref==3.6.0
 attrs==22.2.0
+autopep8==2.0.1
 certifi==2022.12.7
 charset-normalizer==2.1.1
 coreapi==2.3.3
 coreschema==0.0.4
 distlib==0.3.6
+dj-database-url==1.2.0
 Django==4.1.5
 django-admin-honeypot @ git+https://github.com/dmpayton/django-admin-honeypot.git@a840496d183df89965eeb33c9a5dd9ea3919dfff
 django-appconf==1.0.5
@@ -28,8 +30,8 @@ pilkit==2.0
 Pillow==9.4.0
 platformdirs==2.6.2
 psycopg2==2.9.5
+pycodestyle==2.10.0
 pyrsistent==0.19.3
-python-decouple==3.6
 pytz==2022.7
 PyYAML==6.0
 requests==2.28.1

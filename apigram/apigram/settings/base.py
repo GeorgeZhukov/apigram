@@ -16,6 +16,9 @@ import os
 
 from django.utils.deprecation import MiddlewareMixin
 
+import dj_database_url
+
+
 class CustomHeaderMiddleware(MiddlewareMixin):
     def process_request(self, request):
         # This crutch is used for swagger documentation (token substitution)
@@ -57,7 +60,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 
     'django_filters',
-    
+
     'imagekit',
 
 
@@ -79,7 +82,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'apigram.settings.base.CustomHeaderMiddleware', # TODO: remove 
+    'apigram.settings.base.CustomHeaderMiddleware',  # TODO: remove
 ]
 
 ROOT_URLCONF = 'apigram.urls'
@@ -105,14 +108,10 @@ WSGI_APPLICATION = 'apigram.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+DATABASE_URL = os.environ.get('DATABASE_URL', 'postgres://postgres@localhost/apigram_development')
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'apigram_development',
-        'USER': 'postgres',
-        'HOST': 'localhost',
-    }
+    'default': dj_database_url.config(default=DATABASE_URL)
 }
 
 
@@ -191,21 +190,19 @@ MEDIA_URL = '/media/'
 
 
 SWAGGER_SETTINGS = {
-   'SECURITY_DEFINITIONS': {
-    #   'Basic': {
-    #         'type': 'basic'
-    #   },
-      'Token': {
+    'SECURITY_DEFINITIONS': {
+        #   'Basic': {
+        #         'type': 'basic'
+        #   },
+        'Token': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
-      }
-   },
-   'PERSIST_AUTH': True,
-   'REFETCH_SCHEMA_WITH_AUTH': True,
+        }
+    },
+    'PERSIST_AUTH': True,
+    'REFETCH_SCHEMA_WITH_AUTH': True,
 }
 
 STATIC_ROOT = os.environ.get('DJANGO_STATIC_ROOT', BASE_DIR / "static")
 MEDIA_ROOT = os.environ.get('DJANGO_MEDIA_ROOT', BASE_DIR / "media")
-
-

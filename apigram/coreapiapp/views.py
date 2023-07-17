@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
+from django.views import generic
 
 # Create your views here.
 
@@ -12,7 +13,7 @@ class CustomObtainAuthToken(ObtainAuthToken):
     """
     This endpoint returns token
     You should include this token with headers
-    
+
     Header name: **Authorization**
 
     Header value: **Token {{token}}**
@@ -27,3 +28,5 @@ class CustomObtainAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         print("my middleware {}".format(request.headers))
         return super().post(request, *args, **kwargs)
+
+

@@ -2,12 +2,30 @@ upstream django {
     # server unix:///path/to/your/mysite/mysite.sock; # for a file socket
     server app:8000; # for a web port socket (we'll use this first)
 }
+server {
+    listen 8001 default_server;
+
+    server_name _;
+
+
+    return 301 https://$host$request_uri;
+}
+# server {
+#     listen 8001 ;
+#     server_name localhost;
+#     location /.well-known/acme-challenge/J4pPOT4o_xfk460iNTue-tLWbva2lPeLRl0alxEHC44 {
+#         return 200 'J4pPOT4o_xfk460iNTue-tLWbva2lPeLRl0alxEHC44.B3jvwmdQ0iHUB3OHJy1DfAys_thf5ESMPf5fFMhfnYA';
+#     }
+# }
 
 # configuration of the server
 server {
     # the port your site will be served on
-    listen 8000;
-    server_name localhost;
+    listen 8000 ssl;
+    server_name 35.228.191.56 apigram.crabdance.com localhost;
+
+    ssl_certificate     /etc/nginx/templates/cert.pem;
+    ssl_certificate_key /etc/nginx/templates/key.pem;
 
     # the domain name it will serve for
     charset     utf-8;
@@ -15,6 +33,10 @@ server {
     # max upload size
     client_max_body_size 75M;   # adjust to taste
 
+
+    location /.well-known/acme-challenge/J4pPOT4o_xfk460iNTue-tLWbva2lPeLRl0alxEHC44 {
+        return 200 'J4pPOT4o_xfk460iNTue-tLWbva2lPeLRl0alxEHC44.B3jvwmdQ0iHUB3OHJy1DfAys_thf5ESMPf5fFMhfnYA';
+    }
     # Django media
     location /media  {
         alias /usr/src/app/apigram/media;  # your Django project's media files - amend as required

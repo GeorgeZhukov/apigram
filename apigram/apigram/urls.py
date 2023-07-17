@@ -21,8 +21,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
-
 urlpatterns = [
+
     path('', RedirectView.as_view(url='api/schema/swagger-ui/', permanent=False)),
     path('api/v1/', include('coreapiapp.urls')),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

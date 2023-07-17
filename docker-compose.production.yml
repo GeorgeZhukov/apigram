@@ -13,9 +13,11 @@ services:
       test: curl --silent --fail https://apigram.crabdance.com/api/v1/ || exit 1
   web:
     volumes:
-      - ../nginx:/etc/nginx/templates
+      - /home/scofield_cross/nginx:/etc/nginx/templates
+      # - ./nginx:/etc/nginx/templates
       - app_data_static:/usr/src/app/apigram/static:ro
       - app_data_media:/usr/src/app/apigram/media:ro
     ports:
       - "443:8000"
+      - "80:8001"
 

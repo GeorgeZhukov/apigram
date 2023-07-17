@@ -20,7 +20,7 @@ services:
           "CMD",
           "pg_isready",
           "-Upostgres",
-          "-dapigram_development"
+          "-dapigram_production"
         ]
   app:
     build: .
